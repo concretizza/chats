@@ -1,0 +1,52 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE-specific files
+.idea/
+.vscode/
+*.pydevproject
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+
+# Translations
+*.mo
+
+# Documentation
+docs/_build/
+
+# Miscellaneous
+*.log
+*.pot
+*.pyc
+.local/
+
+# Tests cache
+.pytest_cache
