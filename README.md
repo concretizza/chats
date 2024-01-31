@@ -48,6 +48,28 @@ Running specific test case within suite
 pytest ./tests/models/test_conversations.py::TestConversations::test_document
 ```
 
+## Database
+
+Migrations
+
+Create a new migration
+
+```
+alembic revision --autogenerate -m "create users table"
+```
+
+To apply the migration
+
+```
+alembic upgrade head
+```
+
+To roll back the migration
+
+```
+alembic downgrade -1
+```
+
 ## Running the application
 
 

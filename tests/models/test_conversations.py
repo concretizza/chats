@@ -17,6 +17,7 @@ class TestConversations(BaseTest):
         new_document = Document()
         new_document.user_id = new_user.id
         new_document.title = 'my document'
+        new_document.status = 'processing'
         self.session.add(new_document)
         self.session.commit()
 
@@ -41,6 +42,7 @@ class TestConversations(BaseTest):
         new_document = Document()
         new_document.user_id = new_user.id
         new_document.title = 'my document'
+        new_document.status = 'processing'
         self.session.add(new_document)
         self.session.commit()
 
