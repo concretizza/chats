@@ -51,3 +51,6 @@ docs/_build/
 
 # Tests cache
 .pytest_cache
+
+# Application
+uploads
