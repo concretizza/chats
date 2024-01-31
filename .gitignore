@@ -47,6 +47,7 @@ docs/_build/
 *.pot
 *.pyc
 .local/
+.DS_Store
 
 # Tests cache
 .pytest_cache

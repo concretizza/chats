@@ -47,3 +47,12 @@ Running specific test case within suite
 ```
 pytest ./tests/models/test_conversations.py::TestConversations::test_document
 ```
+
+## Running the application
+
+
+Development mode
+
+```
+uvicorn app.main:app --reload
+```

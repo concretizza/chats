@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, DateTime, func, ForeignKey
+from sqlalchemy import Column, BigInteger, DateTime, func, ForeignKey, Index, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from app.models import Base
@@ -6,6 +6,17 @@ from app.models import Base
 
 class Conversation(Base):
     __tablename__ = 'conversations'
+
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['document_id'],
+            ['documents.id'],
+            name='fk_document_id',
+            onupdate='NO ACTION',
+            ondelete='CASCADE',
+        ),
+        Index('ix_conversations_document_id', 'document_id'),
+    )
 
     id = Column(BigInteger, primary_key=True)
     document_id = Column(BigInteger, ForeignKey('documents.id'), nullable=False)
