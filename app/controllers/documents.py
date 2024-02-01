@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 
 import app.database
 from app.dtos.common import NotFoundResponse
+from app.enums.document_status import DocumentStatus
+from app.logger import logger
 from app.models.document import Document
 from app.models.user import User
 
@@ -27,29 +29,32 @@ async def store(doc: UploadFile = File(...), db: Session = Depends(app.database.
     file_path = os.path.join(uploads_path, f'{file_name}.pdf')
 
     try:
-        user = User()
-        user.uuid = uuid.uuid4()
-        db.add(user)
-        db.commit()
+        with db.begin() as transaction:
+            user = User()
+            user.uuid = uuid.uuid4()
+            db.add(user)
+            db.flush()
 
-        document = Document()
-        document.user_id = user.id
-        document.title = doc.filename
-        document.status = 'processing'
+            document = Document()
+            document.user_id = user.id
+            document.title = doc.filename
+            document.status = DocumentStatus.PENDING.value
+            db.add(document)
+            db.flush()
+            db.refresh(document)
 
-        db.add(document)
-        db.commit()
-        db.refresh(document)
+            transaction.commit()
     except Exception as e:
-        db.rollback()
-        return {'message': f'there was an error saving the document metadata: {e}'}
+        logger.error(f'store the document: {e}', exc_info=True)
+        return {'message': 'there was an error saving the document metadata'}
 
     try:
         with open(file_path, 'wb') as f:
             while contents := doc.file.read(1024 * 1024):
                 f.write(contents)
     except Exception as e:
-        return {'message': f'there was an error uploading the file: {e}'}
+        logger.error(f'upload the document: {e}', exc_info=True)
+        return {'message': 'there was an error uploading the file'}
     finally:
         doc.file.close()
 

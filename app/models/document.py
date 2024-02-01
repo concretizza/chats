@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, DateTime, func, String, ForeignKey, ForeignKeyConstraint, Index
+from sqlalchemy import Column, BigInteger, DateTime, func, String, ForeignKey, ForeignKeyConstraint, Index, SMALLINT
 from sqlalchemy.orm import relationship
 
 from app.models import Base
@@ -21,7 +21,7 @@ class Document(Base):
     id = Column(BigInteger, primary_key=True)
     user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     title = Column(String, nullable=False)
-    status = Column(String, nullable=False)
+    status = Column(SMALLINT, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)

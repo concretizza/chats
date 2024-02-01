@@ -28,6 +28,13 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
+### Variables
+
+```
+DB_URL=postgresql://root:4321@localhost/chats
+LOGGER_LEVEL=info
+```
+
 ## Tests
 
 Running all tests

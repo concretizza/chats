@@ -1,5 +1,6 @@
 import uuid
 
+from app.enums.document_status import DocumentStatus
 from app.models.conversation import Conversation
 from app.models.document import Document
 from app.models.message import Message
@@ -17,7 +18,7 @@ class TestConversations(BaseTest):
         new_document = Document()
         new_document.user_id = new_user.id
         new_document.title = 'my document'
-        new_document.status = 'processing'
+        new_document.status = DocumentStatus.PENDING.value
         self.session.add(new_document)
         self.session.commit()
 
@@ -42,7 +43,7 @@ class TestConversations(BaseTest):
         new_document = Document()
         new_document.user_id = new_user.id
         new_document.title = 'my document'
-        new_document.status = 'processing'
+        new_document.status = DocumentStatus.PENDING.value
         self.session.add(new_document)
         self.session.commit()
 
