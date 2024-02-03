@@ -1,5 +1,6 @@
 import datetime
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from app.models import Base
@@ -10,6 +11,8 @@ from app.models.message import Message
 
 from app.controllers import documents
 from app.dtos.healthcheck import HealthcheckResponse
+
+load_dotenv()
 
 version = '0.0.1'
 

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 import app.database
 from app.dtos.common import NotFoundResponse
 from app.enums.document_status import DocumentStatus
+from app.jobs import embeddings
 from app.logger import logger
 from app.models.document import Document
 from app.models.user import User
@@ -57,5 +58,8 @@ async def store(doc: UploadFile = File(...), db: Session = Depends(app.database.
         return {'message': 'there was an error uploading the file'}
     finally:
         doc.file.close()
+
+    # TODO: run async
+    embeddings.create(document.id, file_path)
 
     return {'message': 'successfully uploaded'}

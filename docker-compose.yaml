@@ -1,7 +1,7 @@
 version: "3"
 services:
   psql:
-    image: postgres:14
+    image: pgvector/pgvector:pg16
     container_name: psql
     restart: unless-stopped
     tty: true
