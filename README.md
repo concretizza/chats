@@ -79,9 +79,21 @@ alembic downgrade -1
 
 ## Running the application
 
-
 Development mode
 
 ```
 uvicorn app.main:app --reload
+```
+
+## Jobs
+
+MacOS only workaround for fork issues
+
+```
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+```
+
+Running the worker
+```
+python -m app.worker --with-scheduler
 ```

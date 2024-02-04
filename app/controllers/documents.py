@@ -11,6 +11,7 @@ from app.jobs import embeddings
 from app.logger import logger
 from app.models.document import Document
 from app.models.user import User
+from app.queuer import q
 
 router = APIRouter(
     prefix='/documents',
@@ -46,7 +47,7 @@ async def store(doc: UploadFile = File(...), db: Session = Depends(app.database.
 
             transaction.commit()
     except Exception as e:
-        logger.error(f'store the document: {e}', exc_info=True)
+        logger.error('store the document: %s', e, exc_info=True)
         return {'message': 'there was an error saving the document metadata'}
 
     try:
@@ -54,12 +55,11 @@ async def store(doc: UploadFile = File(...), db: Session = Depends(app.database.
             while contents := doc.file.read(1024 * 1024):
                 f.write(contents)
     except Exception as e:
-        logger.error(f'upload the document: {e}', exc_info=True)
+        logger.error('upload the document: %s', e, exc_info=True)
         return {'message': 'there was an error uploading the file'}
     finally:
         doc.file.close()
 
-    # TODO: run async
-    embeddings.create(document.id, file_path)
+    q.enqueue(embeddings.create, document.id, file_path)
 
     return {'message': 'successfully uploaded'}
