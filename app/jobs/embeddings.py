@@ -5,18 +5,15 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain_openai import OpenAIEmbeddings
 
+from app.constants.common import COLLECTION_NAME, CHUNK_SIZE, CHUNK_OVERLAP
 from app.logger import logger
-
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 100
-COLLECTION_NAME = 'docs'
 
 
 def create(doc_id: int, doc_path: str):
     try:
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=100,
+            chunk_size=CHUNK_SIZE,
+            chunk_overlap=CHUNK_OVERLAP,
         )
 
         loader = PyPDFLoader(doc_path)

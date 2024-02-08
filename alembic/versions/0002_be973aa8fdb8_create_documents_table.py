@@ -24,8 +24,12 @@ def upgrade() -> None:
         sa.Column('user_id', sa.BigInteger(), sa.ForeignKey('users.id'), nullable=False),
         sa.Column('title', sa.String(), nullable=False),
         sa.Column('status', sa.String(), nullable=False),
-        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+        sa.Column(
+            'created_at', sa.DateTime(), server_default=sa.text("timezone('utc', CURRENT_TIMESTAMP)"), nullable=True,
+        ),
+        sa.Column(
+            'updated_at', sa.DateTime(), server_default=sa.text("timezone('utc', CURRENT_TIMESTAMP)"), nullable=True,
+        ),
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.Index('ix_documents_user_id', 'user_id'),

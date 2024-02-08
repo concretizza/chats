@@ -24,13 +24,22 @@ def upgrade() -> None:
         sa.Column('conversation_id', sa.BigInteger(), sa.ForeignKey('conversations.id'), nullable=False),
         sa.Column('role', sa.String(), nullable=False),
         sa.Column('content', sa.Text(), nullable=False),
-        sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-        sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+        sa.Column(
+            'created_at', sa.DateTime(), server_default=sa.text("timezone('utc', CURRENT_TIMESTAMP)"), nullable=True,
+        ),
+        sa.Column(
+            'updated_at', sa.DateTime(), server_default=sa.text("timezone('utc', CURRENT_TIMESTAMP)"), nullable=True,
+        ),
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.Index('ix_messages_conversation_id', 'conversation_id'),
-        sa.ForeignKeyConstraint(['conversation_id'], ['conversations.id'], name='fk_conversation_id',
-                                onupdate='NO ACTION', ondelete='CASCADE'),
+        sa.ForeignKeyConstraint(
+            ['conversation_id'],
+            ['conversations.id'],
+            name='fk_conversation_id',
+            onupdate='NO ACTION',
+            ondelete='CASCADE',
+        ),
     )
 
 
