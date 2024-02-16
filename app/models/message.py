@@ -1,5 +1,7 @@
+from typing import List
+
 from sqlalchemy import Column, BigInteger, DateTime, func, ForeignKey, String, Text, ForeignKeyConstraint, Index
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 
 from app.models import Base
 
@@ -27,3 +29,12 @@ class Message(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     conversation = relationship('Conversation', back_populates='messages')
+
+    @staticmethod
+    def store_many(db: Session, messages: List['Message']):
+        try:
+            db.bulk_save_objects(messages)
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise

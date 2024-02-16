@@ -51,4 +51,7 @@ async def store(
     docs_related = retriever.get_relevant_documents(req.content)
     knowledge = '\n'.join([item.page_content for item in docs_related])
 
-    return StreamingResponse(Chat.conversation(knowledge, req.content), media_type='text/event-stream')
+    return StreamingResponse(
+        Chat.conversation(db, conversation.id, knowledge, req.content),
+        media_type='text/event-stream',
+    )

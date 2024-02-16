@@ -1,3 +1,5 @@
+from urllib.parse import unquote
+
 from fastapi import HTTPException, status, Request, Security, Depends
 from typing import Optional, Type
 
@@ -28,6 +30,9 @@ async def get_current_user(
         api_key: str = Depends(get_api_key),
 ) -> Type[User]:
     token: Optional[str] = request.headers.get('Authorization')
+    if token is None:
+        token = request.cookies.get('Authorization')
+        token = unquote(token)
 
     if not token:
         raise HTTPException(

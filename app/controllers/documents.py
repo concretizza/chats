@@ -2,7 +2,7 @@ import os
 import uuid
 
 from fastapi import APIRouter, UploadFile, File, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app import database
 from app.dtos.common import NotFoundResponse
@@ -19,6 +19,20 @@ router = APIRouter(
     tags=['Document'],
     responses=NotFoundResponse,
 )
+
+
+@router.get('/')
+async def index(
+        db: Session = Depends(database.connection),
+        current_user: User = Depends(get_current_user),
+):
+    documents = db.query(Document).options(
+        selectinload(Document.conversations),
+    ).filter(
+        Document.user_id == int(current_user.id),
+    ).all()
+
+    return documents
 
 
 @router.post('/uploads')
@@ -44,7 +58,9 @@ async def store(
         db.add(document)
         db.flush()
         db.refresh(document)
+        db.commit()
     except Exception as e:
+        db.rollback()
         logger.error('store the document: %s', e, exc_info=True)
         return {'message': 'there was an error saving the document metadata'}
 
