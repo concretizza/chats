@@ -25,4 +25,4 @@ class Conversation(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     document = relationship('Document', back_populates='conversations')
-    messages = relationship('Message', back_populates='conversation')
+    messages = relationship('Message', back_populates='conversation', order_by='Message.id.desc()')

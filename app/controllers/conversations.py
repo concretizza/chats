@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app import database
 from app.dtos.common import NotFoundResponse
@@ -13,6 +13,22 @@ router = APIRouter(
     tags=['Conversation'],
     responses=NotFoundResponse,
 )
+
+
+@router.get('/{conversation_id}')
+async def show(
+        conversation_id: int,
+        db: Session = Depends(database.connection),
+        current_user: User = Depends(get_current_user),
+):
+    conversation = db.query(Conversation).options(
+        selectinload(Conversation.messages),
+    ).filter(Conversation.id == conversation_id).first()
+
+    if current_user.id != conversation.document.user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='cannot access this conversation')
+
+    return conversation
 
 
 @router.post('/')
