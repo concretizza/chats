@@ -16,8 +16,11 @@ client = TestClient(app)
 
 class TestConversations(BaseTest):
     def test_store_conversation(self):
+        account_uuid = uuid.uuid4()
+
         user = User()
         user.uuid = uuid.uuid4()
+        user.set_metadata(account_uuid=str(account_uuid))
         self.session.add(user)
         self.session.flush()
         self.session.refresh(user)
@@ -26,21 +29,25 @@ class TestConversations(BaseTest):
         doc.user_id = user.id
         doc.title = 'my document'
         doc.status = DocumentStatus.PENDING.value
+        doc.set_metadata(account_uuid=str(account_uuid))
         self.session.add(doc)
         self.session.commit()
         self.session.refresh(doc)
 
         response = client.post(
             f'/conversations/?doc_id={doc.id}',
-            headers={'Authorization': f'Bearer {user.id}'},
+            headers={'Authorization': f'Bearer {self.get_access_token(str(user.uuid), str(account_uuid))}'},
         )
 
         assert response.status_code == 200
         assert response.json()['document_id'] == doc.id
 
     def test_show_conversation(self):
+        account_uuid = uuid.uuid4()
+
         user = User()
         user.uuid = uuid.uuid4()
+        user.set_metadata(account_uuid=str(account_uuid))
         self.session.add(user)
         self.session.flush()
         self.session.refresh(user)
@@ -49,6 +56,7 @@ class TestConversations(BaseTest):
         doc.user_id = user.id
         doc.title = 'my document'
         doc.status = DocumentStatus.PENDING.value
+        doc.set_metadata(account_uuid=str(account_uuid))
         self.session.add(doc)
         self.session.flush()
         self.session.refresh(doc)
@@ -74,7 +82,7 @@ class TestConversations(BaseTest):
 
         response = client.get(
             f'/conversations/{conv.id}',
-            headers={'Authorization': f'Bearer {user.id}'},
+            headers={'Authorization': f'Bearer {self.get_access_token(str(user.uuid), str(account_uuid))}'},
         )
         conversation_resp = response.json()
 

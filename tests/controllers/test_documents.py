@@ -15,8 +15,11 @@ client = TestClient(app)
 class TestDocuments(BaseTest):
     @mock.patch('app.queuer.q.enqueue')
     def test_store_document(self, mock_enqueue):
+        account_uuid = uuid.uuid4()
+
         user = User()
         user.uuid = uuid.uuid4()
+        user.set_metadata(account_uuid=str(account_uuid))
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
@@ -27,7 +30,7 @@ class TestDocuments(BaseTest):
             response = client.post(
                 '/documents/uploads/',
                 files={'doc': ('sample.pdf', file, 'multipart/form-data')},
-                headers={'Authorization': f'Bearer {user.id}'},
+                headers={'Authorization': f'Bearer {self.get_access_token(str(user.uuid), str(account_uuid))}'},
             )
 
         assert response.status_code == 200

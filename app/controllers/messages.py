@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app import database
 from app.constants.common import COLLECTION_NAME
 from app.dtos.common import NotFoundResponse
-from app.dtos.message import Message as MessageRequest
+from app.dtos.message import MessageRequest
 from app.middlewares.auth import get_current_user
 from app.models.conversation import Conversation
 from app.models.user import User

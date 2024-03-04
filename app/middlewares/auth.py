@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app import database
 from app.models.user import User
+from app.services.access_token import AccessToken
 
 api_key_header = APIKeyHeader(
     name='Authorization',
@@ -40,9 +41,16 @@ async def get_current_user(
             detail='no authentication token provided',
         )
 
-    # TODO: hash token
-    user_id = token.replace('Bearer ', '') if token.startswith('Bearer ') else token
-    user = db.query(User).filter(User.id == user_id).first()
+    plain_token = token.replace('Bearer ', '') if token.startswith('Bearer ') else token
+    access_token = AccessToken().decode(plain_token)
+
+    if access_token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='authentication token is invalid',
+        )
+
+    user = db.query(User).filter(User.uuid == str(access_token['sub'])).first()
 
     if not user:
         raise HTTPException(

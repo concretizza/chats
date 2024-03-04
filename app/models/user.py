@@ -1,4 +1,5 @@
 from sqlalchemy import Column, BigInteger, DateTime, func, CHAR
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.models import Base
@@ -12,5 +13,17 @@ class User(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)
+    cmetadata = Column(JSONB, nullable=True)
 
     documents = relationship('Document', back_populates='user')
+
+    def set_metadata(self, account_uuid: str | None):
+        cmetadata = {}
+
+        if self.cmetadata is not None:
+            cmetadata['account_uuid'] = self.cmetadata.get('account_uuid', None)
+
+        if account_uuid is not None:
+            cmetadata['account_uuid'] = account_uuid
+
+        self.cmetadata = cmetadata

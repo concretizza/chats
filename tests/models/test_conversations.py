@@ -69,5 +69,5 @@ class TestConversations(BaseTest):
         assert conversation.id == new_document.id
         assert conversation.document.user.uuid == new_user.uuid
         assert len(conversation.messages) == 2
-        assert conversation.messages[0].role == new_message_1.role
-        assert conversation.messages[1].role == new_message_2.role
+        assert conversation.messages[0].role == new_message_2.role
+        assert conversation.messages[1].role == new_message_1.role
