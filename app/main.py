@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.listerner import listener
 from app.models import Base
 from app.models.user import User
 from app.models.document import Document
@@ -31,6 +32,13 @@ app.add_middleware(
 app.include_router(documents.router)
 app.include_router(conversations.router)
 app.include_router(messages.router)
+
+
+@app.on_event('startup')
+async def startup_event():
+    import threading
+    thread = threading.Thread(target=listener, daemon=True)
+    thread.start()
 
 
 @app.get('/', response_model=HealthcheckResponse, summary='Get Healthcheck', tags=['Healthcheck'])

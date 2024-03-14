@@ -2,7 +2,7 @@ from sqlalchemy import Column, BigInteger, DateTime, func, CHAR
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
-from app.models import Base
+from app.models import Base, SessionLocal
 
 
 class User(Base):
@@ -27,3 +27,16 @@ class User(Base):
             cmetadata['account_uuid'] = account_uuid
 
         self.cmetadata = cmetadata
+
+    @staticmethod
+    def create(user):
+        db = SessionLocal()
+
+        user_new = User()
+        user_new.uuid = user['uuid']
+        user_new.set_metadata(account_uuid=user['account_uuid'])
+
+        db.add(user_new)
+        db.flush()
+        db.commit()
+        db.refresh(user_new)
